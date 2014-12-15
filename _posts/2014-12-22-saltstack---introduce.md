@@ -178,14 +178,14 @@ Changes:
 在配置管理方面，Salt在Puppet面前还是能够站稳脚跟的。Salt安装非常简单，属于简单主义的开发风格, 功能丰富。总的来说，不需要过多的操作就可以完成事情。我发现的唯一问题是salt-master和minion之间的连接有时会无故断掉。搜索一番后，我发现其他人在Salt 0.10.5这个版本上也遇到了同样的问题。希望这个问题在下一个版本中得到解决。</p>
 
 ## 命令编排和远程执行
-> MCollective </p>
+> MCollective 
 MCollective是 Puppet的命令编排解决方案。由R.I.Pienaar在PuppetLabs那帮人引起重视之前独立开发完成。MCollective使用message broker (比如ActiveMQ)通过pub-sub总线来传递消息, 可以并行通信，这比用ssh快得多。这是一可以理解特定消息并产生响应的框架。Puppet和MCollective现在可以在同一个框架下工作，同时提供完成配置管理和命令编排的功能。</p>
 
 先不管MCollective的优势，有两个负担能够打击你的激情。第一，MCollective只是和Puppet松散集成，至少对社区版本来讲是这样 。MCollective有单独的安装包，独立的配置文件。另外你还需要安装配置broker(比如ActiveMQ)，来与MCollective一起工作. 虽然不难，但很繁琐。最后，你还不得不自己解决生产环境中通信渠道的安全问题。不幸的是，这个就有点困难。</p>
 
 MCollective的第二个问题是相对来讲缺少一些自带的功能。有很多现成的插件可以下载安装(https://github.com/puppetlabs/mcollective-plugins), 用Ruby写自己的插件也不是很复杂－不过想要立即使用的话，障碍比想像得要大。Nevertheless, given that the framework is solid and extensible, dabbling in Ruby plugins soon makes the real power of MCollective apparent. </p>
 
-> Salt </p>
+> Salt 
 另一方面，Salt生来就有命令编排的功能。最先设想的就是远程执行技术，然后才添加的配置管理管理。Salt使用轻量的ZeroMQ来处理消息。结果就是不需要单独的安装。装好Salt后，配置管理和命令编排就可以工作了。毫不惊奇,Salt state模块和execution模块的命令在语法上类似，所以很直观。再看Puppet和MCollective组合,各自使用不同的工具和语法结构，需要额外的时间去学习。</p>
 
 Salt远程执行功能的可用性令人印象深刻。当前的在线文档列出了超过100个不同的内置excution模块－包括augeas！(所以augeas成为state模块只是时间上的问题). </p>
