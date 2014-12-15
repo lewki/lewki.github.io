@@ -124,11 +124,11 @@ file.managed:
 注意最后一行, 指明被管理的文件是一个jinja模板。</p>
 配置文件可以使用jinja的语法来增加逻辑。举例来说, 假设你的应用程序配置文件中用到了主机名。再假设在Ubuntuh 只需要短主机名（hostname），在CentOS需要FQDN。这可以很容易地在模板文件myapp.conf中指定:</p>
 {% highlight bash %}
-{% if grains['os'] == 'Ubuntu' %}
+{\% if grains['os'] == 'Ubuntu' \%}
 host: {{ grains['host'] }}
-{% elif grains['os'] == 'CentOS' %}
+{\% elif grains['os'] == 'CentOS' \%}
 host: {{ grains['fqdn'] }}
-{% endif %}
+{\% endif \%}
 {% endhighlight %}
 在CentOS节点minion1上结果文件/etc/myapp.conf将包含以下内容</p>
 host: minion1.example.com
