@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "SaltStack   Introduce"
+title: "SaltStack - Introduce"
 categories: SaltStack
-tags:
+tags: salt
 ---
 
 ## 深入SaltStack
