@@ -12,37 +12,37 @@ Maartens Lourens.</p>
 [原文链接：](http://www.opencredo.com/2013/01/10/a-dive-into-salt-stack/)
 [此文链接：](http://www.ituring.com.cn/minibook/746)
 
-对系统工程师来说，配置管理已经向前跃进了一大步. 系统配置的自动化不仅可预测,可重复, 还具有可管理性. 配置管理工具通常使用版本控制化的配置模板来描述基础设施的目标状态。凭借版本控制化的配置，可以将环境回滚（或前滚）到前面（或后序）状态；环境配置文件的自动化管理也是持续性交付管道的必要特性。</p>
+> 对系统工程师来说，配置管理已经向前跃进了一大步. 系统配置的自动化不仅可预测,可重复, 还具有可管理性. 配置管理工具通常使用版本控制化的配置模板来描述基础设施的目标状态。凭借版本控制化的配置，可以将环境回滚（或前滚）到前面（或后序）状态；环境配置文件的自动化管理也是持续性交付管道的必要特性。</p>
 
-CFEngine, Puppet和Chef(按年龄降序)是开源领域流行的配置管理工具。 我是一个Puppet的长期用户, 与自定义的配置脚本相比，它在系统自动化的组织性和可靠性方面带来了巨大的提升。(我是在2009年作出这一次飞跃，与此相比, 以前的日子简直是混乱不堪…) </p>
+> CFEngine, Puppet和Chef(按年龄降序)是开源领域流行的配置管理工具。 我是一个Puppet的长期用户, 与自定义的配置脚本相比，它在系统自动化的组织性和可靠性方面带来了巨大的提升。(我是在2009年作出这一次飞跃，与此相比, 以前的日子简直是混乱不堪…) </p>
 
-虽然配置管理工具精于描述并达到想要的状态, 但并不擅长动态地查询或设置状态. 这一点在状态资源还没有被纳入配置管理时特别明显。Llinux系统管理员的传统解决办法是ssh循环登陆节点列表并执行一堆命令。这不仅容易出错, 且每一次循环都要打开新的ssh会话，效率低下。想像一下要在1000台机器上顺序执行命令！更不用说网络安全，ssh密钥和命令执行权限的问题。这当然是一种可行的办法,但缺少一种可管理的框架。</p>
+> 虽然配置管理工具精于描述并达到想要的状态, 但并不擅长动态地查询或设置状态. 这一点在状态资源还没有被纳入配置管理时特别明显。Llinux系统管理员的传统解决办法是ssh循环登陆节点列表并执行一堆命令。这不仅容易出错, 且每一次循环都要打开新的ssh会话，效率低下。想像一下要在1000台机器上顺序执行命令！更不用说网络安全，ssh密钥和命令执行权限的问题。这当然是一种可行的办法,但缺少一种可管理的框架。</p>
 
-这就是命令编排工具产生的原因。这些工具旨在大量的节点上并行执行命令和实时操作。CFEngine, Puppet和Chef各自用不同的方法来解决命令编排问题。Puppet使用MCollective作为其武器,并将其集成到商业版中。</p>
+> 这就是命令编排工具产生的原因。这些工具旨在大量的节点上并行执行命令和实时操作。CFEngine, Puppet和Chef各自用不同的方法来解决命令编排问题。Puppet使用MCollective作为其武器,并将其集成到商业版中。</p>
 
-近来，我开始探索使用SaltStack来解决配置管理和命令编排这两个问题。SaltStack开始于2011年，是一个相对较新的项目，但在系统管理员和DevOps工程师中拥有越来越多的粉丝。我将在本文中探讨Salt作为前途光明的替代者，并与Puppet作比较以探索其特性。</p>
+> 近来，我开始探索使用SaltStack来解决配置管理和命令编排这两个问题。SaltStack开始于2011年，是一个相对较新的项目，但在系统管理员和DevOps工程师中拥有越来越多的粉丝。我将在本文中探讨Salt作为前途光明的替代者，并与Puppet作比较以探索其特性。</p>
 
 ## 安装
 
-创世之初，满是空白和无序，黑暗笼罩着整个系统……然后神安装了配置管理器，于是阳光普照！唯一的麻烦是，我们还需要安装依赖……然后配置管理器本身还得被配置……并且有时事情会有那么一点丑陋。. </p>
+> 创世之初，满是空白和无序，黑暗笼罩着整个系统……然后神安装了配置管理器，于是阳光普照！唯一的麻烦是，我们还需要安装依赖……然后配置管理器本身还得被配置……并且有时事情会有那么一点丑陋。. </p>
 
-Salt在Ubuntu和CentOS上的安装过程异常简单,我相信在有安装指南的别的系统也一样 (Arch Linux, Debian, Fedora, RedHat, CentOS, FreeBSD, Gentoo, Windows, Solaris). YMMV. 典型安装过程隐藏了不必要的细节配置，除非你需要修改他们。首先安装salt master，然后安装salt minions, 将minions指向master，安装完成。如果salt master的主机名是"salt"，都不需要将minions指向master，直接就可以运行. </p>
+> Salt在Ubuntu和CentOS上的安装过程异常简单,我相信在有安装指南的别的系统也一样 (Arch Linux, Debian, Fedora, RedHat, CentOS, FreeBSD, Gentoo, Windows, Solaris). YMMV. 典型安装过程隐藏了不必要的细节配置，除非你需要修改他们。首先安装salt master，然后安装salt minions, 将minions指向master，安装完成。如果salt master的主机名是"salt"，都不需要将minions指向master，直接就可以运行. </p>
 
-然而, 如果你不是使用上面提到的发行版或操作系统, 你很可能需要卷起袖子自己手动安装一些依赖。包括Python (>= 2.6 < 3.0), ZeroMQ, pyzmq, PyCrypto, msgpack-python和YAML的Python绑定. </p>
+> 然而, 如果你不是使用上面提到的发行版或操作系统, 你很可能需要卷起袖子自己手动安装一些依赖。包括Python (>= 2.6 < 3.0), ZeroMQ, pyzmq, PyCrypto, msgpack-python和YAML的Python绑定. </p>
 
-另一方面, Puppet在多数基础安装时只依赖Ruby和Facter, 依赖带来的麻烦显著减少. 然而，Puppet的依赖列表可以进一步增加，包括augeas-libs, dmidecode, hiera, libselinux-ruby, pciutils, ruby-augeas, ruby-irb, ruby-rdoc, rubygem-json, ruby-shadow, rubygems. 这取决于Puppet的版本和你想要使用的功能. </p>
+> 另一方面, Puppet在多数基础安装时只依赖Ruby和Facter, 依赖带来的麻烦显著减少. 然而，Puppet的依赖列表可以进一步增加，包括augeas-libs, dmidecode, hiera, libselinux-ruby, pciutils, ruby-augeas, ruby-irb, ruby-rdoc, rubygem-json, ruby-shadow, rubygems. 这取决于Puppet的版本和你想要使用的功能. </p>
 
-我喜欢Salt包安装的简单明了。For the cases mentioned it is trivial to set up and get going. 如果你想亲自安装和配置的繁过程, 跟着安装指南做即可. </p>
+> 我喜欢Salt包安装的简单明了。For the cases mentioned it is trivial to set up and get going. 如果你想亲自安装和配置的繁过程, 跟着安装指南做即可. </p>
 
 If you are like me though and you prefer your provisioning and configuration all in one gift wrapped package, que Vagrant to the rescue and download this project by elasticdog on github.</p>
 
 ## 配置管理
-
+</p>
 #### 配置状态
 
-配置管理对Puppet来说是小菜一叠，对Salt又如何呢。让我（高兴的）惊讶的是，这件事简单到令人发指。和Puppet一样，在Salt中可以描述系统的目标状态。. Salt将其称之为一个state, 配置模块是state模块。Salt的State模块文件用YAML写成，以.sls结尾。它们从功能上等同于Puppet模块的manifest文件，后者用Puppet DSL写成，以.pp结尾. </p>
+> 配置管理对Puppet来说是小菜一叠，对Salt又如何呢。让我（高兴的）惊讶的是，这件事简单到令人发指。和Puppet一样，在Salt中可以描述系统的目标状态。. Salt将其称之为一个state, 配置模块是state模块。Salt的State模块文件用YAML写成，以.sls结尾。它们从功能上等同于Puppet模块的manifest文件，后者用Puppet DSL写成，以.pp结尾. </p>
 
-Salt在master的配置文件中指定"file roots", 类似于Puppet的"module path", 但同时包含了模块根目录和环境类型。举例来说，在Salt中我们可以分别指定development和test环境配置文件路径. 注意base环境是必须存在的. </p>
+> Salt在master的配置文件中指定"file roots", 类似于Puppet的"module path", 但同时包含了模块根目录和环境类型。举例来说，在Salt中我们可以分别指定development和test环境配置文件路径. 注意base环境是必须存在的. </p>
 
 {% highlight bash %}
 file_roots:
@@ -54,9 +54,9 @@ prod:
 - /srv/salt/prod
 {% endhighlight %}
 
-base环境必须包含Salt的入口top文件(叫做top.sls).base定义了一个或多个环境，用正则来匹配节点，然后引用相应的Salt states. top文件与Puppet的nodes文件相似。(Puppet入口点是site文件,在Salt中不需要).</p>
+> base环境必须包含Salt的入口top文件(叫做top.sls).base定义了一个或多个环境，用正则来匹配节点，然后引用相应的Salt states. top文件与Puppet的nodes文件相似。(Puppet入口点是site文件,在Salt中不需要).</p>
 
-假设有一个Salt master和两个minions (由Elasticdog github提供)，我想要在两个minions上安装mongodb。如果在默认的软件仓库中有mongodb包，只需要3步即可。</p>
+> 假设有一个Salt master和两个minions (由Elasticdog github提供)，我想要在两个minions上安装mongodb。如果在默认的软件仓库中有mongodb包，只需要3步即可。</p>
 
 - 1, 在top.sls中指定节点。
 {% highlight bash %}
@@ -101,17 +101,17 @@ boost: {'new': '1.33.1-15.el5', 'old': ''}
 js: {'new': '1.70-8.el5', 'old': ''}
 {% endhighlight %}
 
-配置描述文件与Puppet非常相似。但格式差别很大。这是因为Puppet使用自己的ruby-like DSL, 而Salt使用YAML. 正是由于这点不同，造就了Salt state配置文件在视觉上的简洁性。YAML对人类可读也容易被映射到数据结构, 非常适合做配置管理中的资源描述。这不是说Puppet DSL不清晰或不结构化- it is neither - 但很难胜过YAML. YAML可以快速写成，在我的经验看，比Puppet DSL要容易生成.</p>
+> 配置描述文件与Puppet非常相似。但格式差别很大。这是因为Puppet使用自己的ruby-like DSL, 而Salt使用YAML. 正是由于这点不同，造就了Salt state配置文件在视觉上的简洁性。YAML对人类可读也容易被映射到数据结构, 非常适合做配置管理中的资源描述。这不是说Puppet DSL不清晰或不结构化- it is neither - 但很难胜过YAML. YAML可以快速写成，在我的经验看，比Puppet DSL要容易生成.</p>
 
-注意: 配置管理社区关于声明配置的最佳方式一直存在争论。部分人青睐于利用编程语言（比如说Ruby）的灵活性。Chef是其中的代表。Puppet处于中间地段。当使用现成的功能时，Puppet DSL非常强大。但要给配置开发者更大的能力，就必须使用内部的Ruby DSL。在波谱的另一端，Salt的简单YAML状态描述非常结构化。然而，Salt也支持渲染诸如JSON, Mako, Wempy和Jinja来扩展其能力, 在将来还会支持XML,原生Python及其他。</p>
+> 注意: 配置管理社区关于声明配置的最佳方式一直存在争论。部分人青睐于利用编程语言（比如说Ruby）的灵活性。Chef是其中的代表。Puppet处于中间地段。当使用现成的功能时，Puppet DSL非常强大。但要给配置开发者更大的能力，就必须使用内部的Ruby DSL。在波谱的另一端，Salt的简单YAML状态描述非常结构化。然而，Salt也支持渲染诸如JSON, Mako, Wempy和Jinja来扩展其能力, 在将来还会支持XML,原生Python及其他。</p>
 
 ## 内置的state模块
-我知道Salt是比Puppet近的项目， 我完全可以预料到不会有太多可用的内置模块。我错了: Salt有大量的内置模块，包含Puppet中的大部分必要模块比如 cron, exec (Salt是cmd), file, group, host, mount, package (Salt中是pkg), service, ssh_authorized_key (Salt是ssh_auth)和user. </p>
+> 我知道Salt是比Puppet近的项目， 我完全可以预料到不会有太多可用的内置模块。我错了: Salt有大量的内置模块，包含Puppet中的大部分必要模块比如 cron, exec (Salt是cmd), file, group, host, mount, package (Salt中是pkg), service, ssh_authorized_key (Salt是ssh_auth)和user. </p>
 尽管如此, Puppet仍然具有部分优势。比如, 我非常喜欢Puppet的Augeas模块。Augeas把内容当作value树，允许你修改(而不是覆盖)一个已存在的配置文件. </p>
 虽然Salt有一个Augeas execution模块，但很不幸貌似没有Augeas的state模块。虽然这样，Salt也有一些自己特有的东西，比如针对git, hg和svn的内置state模块.</p>
 
 ## 模板
-Puppet具有开盒即用的模板系统。Puppet有file资源和template资源的概念，这些资源分布在模块目录结构的不同路径下。在Salt中, files和templates在同一个位置。通过为template指令指定type来区分是template还是普通文件资源, type可以是jinja, mako或wempy。好处是可以很容易为file资源增加逻辑。state文件可能看起来像下面这样：</p>
+> Puppet具有开盒即用的模板系统。Puppet有file资源和template资源的概念，这些资源分布在模块目录结构的不同路径下。在Salt中, files和templates在同一个位置。通过为template指令指定type来区分是template还是普通文件资源, type可以是jinja, mako或wempy。好处是可以很容易为file资源增加逻辑。state文件可能看起来像下面这样：</p>
 {% highlight bash %}
 /etc/myapp.conf:
 file.managed:
@@ -122,7 +122,7 @@ file.managed:
 - template: jinja
 {% endhighlight %}
 注意最后一行, 指明被管理的文件是一个jinja模板。</p>
-配置文件可以使用jinja的语法来增加逻辑。举例来说, 假设你的应用程序配置文件中用到了主机名。再假设在Ubuntuh 只需要短主机名（hostname），在CentOS需要FQDN。这可以很容易地在模板文件myapp.conf中指定:</p>
+> 配置文件可以使用jinja的语法来增加逻辑。举例来说, 假设你的应用程序配置文件中用到了主机名。再假设在Ubuntuh 只需要短主机名（hostname），在CentOS需要FQDN。这可以很容易地在模板文件myapp.conf中指定:</p>
 {% highlight bash %}
 {\% if grains['os'] == 'Ubuntu' \%}
 host: {{ grains['host'] }}
@@ -134,7 +134,7 @@ host: {{ grains['fqdn'] }}
 host: minion1.example.com
 
 ## 变量
-Salt中的全局变量不能在使用时定义。在对变量的支持方面Puppet更加直观和灵活。在Salt中, 所有的变量保存在单独的位置。这样做不够灵活，但优势是更有秩序。用Salt的话讲，变量叫做"pillars"。pillars的位置在salt master的配置文件中指定:</p>
+> Salt中的全局变量不能在使用时定义。在对变量的支持方面Puppet更加直观和灵活。在Salt中, 所有的变量保存在单独的位置。这样做不够灵活，但优势是更有秩序。用Salt的话讲，变量叫做"pillars"。pillars的位置在salt master的配置文件中指定:</p>
 {% highlight bash %}
 pillar_roots:
 base:
@@ -158,7 +158,7 @@ pillar['httpd']
 {% endhighlight %}
 
 ## 模拟执行(Dry run)
-管理系统有点像驾驶飞机。如果不小心谨慎，将会是高风险的事情。假设我是一个双翼飞机的驾驶员，将做一个危险的aerial manoeuvre, 我多半会希望能够先模拟飞行。除非我像Red Baron一样无所畏惧。无论如何，还好在执行Salt之前可以先做测试。你需要做的仅仅是将Test设置为True。</p>
+> 管理系统有点像驾驶飞机。如果不小心谨慎，将会是高风险的事情。假设我是一个双翼飞机的驾驶员，将做一个危险的aerial manoeuvre, 我多半会希望能够先模拟飞行。除非我像Red Baron一样无所畏惧。无论如何，还好在执行Salt之前可以先做测试。你需要做的仅仅是将Test设置为True。</p>
 {% highlight bash %}
 # salt 'minion1.example.com' state.highstate -v test=True
 
@@ -175,22 +175,22 @@ Changes:
 {% endhighlight %}
 
 ## 总结
-在配置管理方面，Salt在Puppet面前还是能够站稳脚跟的。Salt安装非常简单，属于简单主义的开发风格, 功能丰富。总的来说，不需要过多的操作就可以完成事情。我发现的唯一问题是salt-master和minion之间的连接有时会无故断掉。搜索一番后，我发现其他人在Salt 0.10.5这个版本上也遇到了同样的问题。希望这个问题在下一个版本中得到解决。</p>
+> 在配置管理方面，Salt在Puppet面前还是能够站稳脚跟的。Salt安装非常简单，属于简单主义的开发风格, 功能丰富。总的来说，不需要过多的操作就可以完成事情。我发现的唯一问题是salt-master和minion之间的连接有时会无故断掉。搜索一番后，我发现其他人在Salt 0.10.5这个版本上也遇到了同样的问题。希望这个问题在下一个版本中得到解决。</p>
 
 ## 命令编排和远程执行
 > MCollective 
 MCollective是 Puppet的命令编排解决方案。由R.I.Pienaar在PuppetLabs那帮人引起重视之前独立开发完成。MCollective使用message broker (比如ActiveMQ)通过pub-sub总线来传递消息, 可以并行通信，这比用ssh快得多。这是一可以理解特定消息并产生响应的框架。Puppet和MCollective现在可以在同一个框架下工作，同时提供完成配置管理和命令编排的功能。</p>
 
-先不管MCollective的优势，有两个负担能够打击你的激情。第一，MCollective只是和Puppet松散集成，至少对社区版本来讲是这样 。MCollective有单独的安装包，独立的配置文件。另外你还需要安装配置broker(比如ActiveMQ)，来与MCollective一起工作. 虽然不难，但很繁琐。最后，你还不得不自己解决生产环境中通信渠道的安全问题。不幸的是，这个就有点困难。</p>
+> 先不管MCollective的优势，有两个负担能够打击你的激情。第一，MCollective只是和Puppet松散集成，至少对社区版本来讲是这样 。MCollective有单独的安装包，独立的配置文件。另外你还需要安装配置broker(比如ActiveMQ)，来与MCollective一起工作. 虽然不难，但很繁琐。最后，你还不得不自己解决生产环境中通信渠道的安全问题。不幸的是，这个就有点困难。</p>
 
-MCollective的第二个问题是相对来讲缺少一些自带的功能。有很多现成的插件可以下载安装(https://github.com/puppetlabs/mcollective-plugins), 用Ruby写自己的插件也不是很复杂－不过想要立即使用的话，障碍比想像得要大。Nevertheless, given that the framework is solid and extensible, dabbling in Ruby plugins soon makes the real power of MCollective apparent. </p>
+> MCollective的第二个问题是相对来讲缺少一些自带的功能。有很多现成的插件可以下载安装(https://github.com/puppetlabs/mcollective-plugins), 用Ruby写自己的插件也不是很复杂－不过想要立即使用的话，障碍比想像得要大。Nevertheless, given that the framework is solid and extensible, dabbling in Ruby plugins soon makes the real power of MCollective apparent. </p>
 
 > Salt 
 另一方面，Salt生来就有命令编排的功能。最先设想的就是远程执行技术，然后才添加的配置管理管理。Salt使用轻量的ZeroMQ来处理消息。结果就是不需要单独的安装。装好Salt后，配置管理和命令编排就可以工作了。毫不惊奇,Salt state模块和execution模块的命令在语法上类似，所以很直观。再看Puppet和MCollective组合,各自使用不同的工具和语法结构，需要额外的时间去学习。</p>
 
-Salt远程执行功能的可用性令人印象深刻。当前的在线文档列出了超过100个不同的内置excution模块－包括augeas！(所以augeas成为state模块只是时间上的问题). </p>
+> Salt远程执行功能的可用性令人印象深刻。当前的在线文档列出了超过100个不同的内置excution模块－包括augeas！(所以augeas成为state模块只是时间上的问题). </p>
 
-举个简单的例子，看看通用的"cmd.run"模块和指令。这在你知道想要执行的命令却又没有现成的模块可用时非常有用，- 或者你仅仅想要快速地远程执行命令。假设我想在所有节点上检查运行的内核版本号：</p>
+> 举个简单的例子，看看通用的"cmd.run"模块和指令。这在你知道想要执行的命令却又没有现成的模块可用时非常有用，- 或者你仅仅想要快速地远程执行命令。假设我想在所有节点上检查运行的内核版本号：</p>
 {% highlight bash %}
 [root@salt salt]# salt '*' cmd.run "uname -r"
 minion1.example.com: 2.6.18-274.18.1.el5
@@ -207,13 +207,13 @@ salt '*' disk.usage
 {% endhighlight %}
 使用内置模块而不用cmd.run发送shell命令的好处是，模块通常返回固定结构的数据。能够以编程的方式用在自动化处理上。</p>
 
-有很多现成的execution模块来满足通用的管理任务，比如apt, at, cp, cron, disk, extfs, file, hosts, iptables, mount, network, pam, parted, pkg, ps, selinux, shadow, ssh, and test. 也有大量的模块用于指定的软件包和应用程序，比如apache, cassandra, djangomod, git, mongodb, mysql, nginx, nova, postgres, solr, sqlite3, 和tomcat.</p>
+> 有很多现成的execution模块来满足通用的管理任务，比如apt, at, cp, cron, disk, extfs, file, hosts, iptables, mount, network, pam, parted, pkg, ps, selinux, shadow, ssh, and test. 也有大量的模块用于指定的软件包和应用程序，比如apache, cassandra, djangomod, git, mongodb, mysql, nginx, nova, postgres, solr, sqlite3, 和tomcat.</p>
 
 甚至支持执行Puppet程序。</p>
 
 ## 总结
 
-毫无疑问，Salt远程执行比Puppet加MCollective更优雅，附带可用的功能更多。支持动态查询和大规模的服务编排。要查看完整的功能，请参考salt execution模块的文档。</p>
+> 毫无疑问，Salt远程执行比Puppet加MCollective更优雅，附带可用的功能更多。支持动态查询和大规模的服务编排。要查看完整的功能，请参考salt execution模块的文档。</p>
 
 ## 附加功能
 
@@ -226,18 +226,18 @@ salt '*' disk.usage
 #### Salt Syndic
 > Salt文档将Salt Syndic描述为"一个可以构建Salt命令拓扑的强大工具“。实际意义上，Salt Syndic可以让一个运行Syndic服务的Salt master连接到更高层的master。</p>
 
-假设你有多个不同的Salt环境，每个环境都有一个master。这些环境可能是特的云或是有防火墙的网络。假设你想同时控制这几个环境中的minions。你可以在想要控制的master主机上安装Salt Syndic。Salt Syndic创建了传输接口，在最顶层的master看来，就像是控制了很多的minion,但配置状态实际上是传递给了多个master。可以将其想像为军队的命令传递系统。</p>
+> 假设你有多个不同的Salt环境，每个环境都有一个master。这些环境可能是特的云或是有防火墙的网络。假设你想同时控制这几个环境中的minions。你可以在想要控制的master主机上安装Salt Syndic。Salt Syndic创建了传输接口，在最顶层的master看来，就像是控制了很多的minion,但配置状态实际上是传递给了多个master。可以将其想像为军队的命令传递系统。</p>
 
 #### 集成测试
-有两个采用现有测试框架的项目给Puppet增加测试功能，名字是cucumber-puppet (使用 Cucumber框架)和rspec-puppet (使用RSpec).
+> 有两个采用现有测试框架的项目给Puppet增加测试功能，名字是cucumber-puppet (使用 Cucumber框架)和rspec-puppet (使用RSpec).
 Salt采取的做法是通过一系列的集成类提供对集成测试的支持，roadmap中提到未来会使用Unittest2和pytest做单元测试。
 自动化集成测试是持续性交付管道被忽视的领域，能有一些内建的支持是非常好的。这也是以后的博文中将探讨的有趣领域</p>
 
 ## 结论
-我的目的是看看Salt Stack是否能做为配置管理和系统命令编排的解决方案。我的方法是与Puppet中最常用的功能作比较，以探索Salt的功能。结论是很耀眼的。Salt Stack不仅自带了很多功能，且易于安装，使用，扩展。 很明显，Salt前途一片光明。</p>
+> 我的目的是看看Salt Stack是否能做为配置管理和系统命令编排的解决方案。我的方法是与Puppet中最常用的功能作比较，以探索Salt的功能。结论是很耀眼的。Salt Stack不仅自带了很多功能，且易于安装，使用，扩展。 很明显，Salt前途一片光明。</p>
 
-- 有用的链接
-Saltstack[主页:](http://saltstack.org)
-Salt[下载:](http://saltstack.org/download/)
-Salt在[GitHub:](https://github.com/saltstack/salt)
-Salt[开发者博客:](http://red45.wordpress.com/)
+有用的链接 </p>
+- Saltstack[主页:](http://saltstack.org)
+- Salt[下载:](http://saltstack.org/download/)
+- Salt在[GitHub:](https://github.com/saltstack/salt)
+- Salt[开发者博客:](http://red45.wordpress.com/)
