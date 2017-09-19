@@ -1,16 +1,15 @@
 markdown: rdiscount
 permalink: /:title/
 url: http://lewki.github.com
-name: tianlu.me
-author: criso
+name: Lvpyy Cloud
+author: cris tien
 qq: 458910009
 email: ulnait@126.com	
 github: lewki
 pygments: true
 safe: true
 paginate: 20
-about: " <p> *本博客clone自 - [webfrogs](https://github.com/webfrogs/webfrogs.github.com) 非常感谢这个简洁的模板* </p> 
-<p>爱好: 阅读，听音乐，追随心灵的自由，学习并用实践去验证，目前开始学perl~ </p>
+about: *本博客clone自 - [webfrogs](https://github.com/webfrogs/webfrogs.github.com) 非常感谢这个简洁的模板* 
 
 
-|< ** Humility comes before honor ** >| 尊荣之前必得谦卑 |  "
+| Humility comes before honor | 尊荣之前必得谦卑 | 
