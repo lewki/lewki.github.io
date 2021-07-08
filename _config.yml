@@ -2,9 +2,10 @@ markdown: rdiscount
 permalink: /:title/
 url: lewki.github.io
 baseurl: /
-name: lvpyy.com
+name: tianlu.me
 author: cris tien
 qq: 458910009
+wechat: tianlu_me
 email: ulnait@126.com	
 github: lewki
 duoshuo: cristo
@@ -14,4 +15,4 @@ paginate: 20
 about: " <p> *本博客clone自 - [webfrogs](https://github.com/webfrogs/webfrogs.github.com) 非常感谢这个简洁的模板* 
 
 
-| Humility comes before honor | 尊荣之前必得谦卑 |  
+Humility comes before honor
