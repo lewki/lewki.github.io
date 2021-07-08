@@ -2,13 +2,11 @@
 title: 关于
 layout: page
 comments: no
----
-
-{{ site.about }}
+----
 
 ----
 
-###<p>联系方式：</p>
+### 联系方式：
 
 {% if site.qq %}
 ＱＱ：[{{ site.qq }}](tencent://message/?uin={{ site.qq }})
